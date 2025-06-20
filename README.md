@@ -5,16 +5,18 @@ Manage your tasks directly from the terminal.
 
 ## Features
 
+- Interactive CLI
 - Add tasks  
 - List all tasks with creation and completion timestamps  
 - Mark tasks as done  
 - Delete tasks  
-
+- Task Logs interduced
 ## Usage
 
 ```bash
-node todo.js list           # Show all tasks
-node todo.js add "Task"     # Add a new task
-node todo.js done 2         # Mark task #2 as done
-node todo.js delete 3       # Delete task #3
-node todo.js help           # Show help message
+ node todo.js   # TO Start
+ list           # Show all tasks
+ add "Task"     # Add a new task
+ done 2         # Mark task #2 as done
+ delete 3       # Delete task #3
+ help           # Show help message
