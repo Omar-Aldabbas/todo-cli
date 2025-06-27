@@ -1,26 +1,19 @@
 // to start write node todo.js
 
-const fs = require("fs");
-const path = require("path");
+const axios = require("axios");
 const readline = require("readline");
 
-//  File path
-const FILE = path.join(__dirname, "tasks.json");
+
 
 //  Load tasks from the file
-function loadTasks() {
-  if (!fs.existsSync(FILE)) return [];
-  return JSON.parse(fs.readFileSync(FILE));
-}
-
-//  Save tasks in file
-function saveTasks(allTasks) {
-  fs.writeFileSync(FILE, JSON.stringify(allTasks, null, 2));
+async function loadTasks() {
+  const res = await axios.get("http://localhost:3000/tasks");
+  return res.data;
 }
 
 //  Show all
-function showTasks() {
-  const tasks = loadTasks();
+async function showTasks() {
+  const tasks = await loadTasks();
 
   if (tasks.length === 0) {
     console.log("📭 No tasks found.");
@@ -41,57 +34,55 @@ function showTasks() {
   });
 }
 
-//  Add task
-function addTask(taskText) {
-  const tasks = loadTasks();
+async function addTask(taskText) {
   const now = new Date().toISOString();
 
-  tasks.push({
+  const task = {
     text: taskText,
     done: false,
     createdAt: now,
     log: [`Task created at ${now}`],
-  });
+  };
 
-  saveTasks(tasks);
+  await axios.post("http://localhost:3000/tasks", task);
   console.log("🆕 Task added.");
 }
 
 //  Mark task as Done
-function markAsDone(taskNumber) {
-  const tasks = loadTasks();
+async function markAsDone(taskNumber) {
+  const tasks = await loadTasks();
   const i = taskNumber - 1;
 
   if (!tasks[i]) {
     console.log(" Task not found.");
     return;
   }
-
+  const task = tasks[i];
   const now = new Date().toISOString();
-  tasks[i].done = true;
-  tasks[i].completedAt = now;
-  tasks[i].log = tasks[i].log || [];
-  tasks[i].log.push(`Marked done at ${now}`);
+  const updatedTask = {
+    done: true,
+    completedAt: now,
+    log: [...(task.log || []), `Marked done at ${now}`],
+  };
 
-  saveTasks(tasks);
+  await axios.patch(`http://localhost:3000/tasks/${task.id}`, updatedTask);
   console.log("✅ Task marked as done.");
 }
 
 //  Delete task
-function deleteTask(taskNumber) {
-  const tasks = loadTasks();
+async function deleteTask(taskNumber) {
+  const tasks = await loadTasks();
   const i = taskNumber - 1;
 
   if (!tasks[i]) {
     console.log(" Task not found.");
     return;
   }
+  const task = tasks[i];
+  console.log(` Deleting: ${task.text}`);
+  console.log("📓 Log:", task.log);
 
-  console.log(` Deleting: ${tasks[i].text}`);
-  console.log("📓 Log:", tasks[i].log);
-
-  tasks.splice(i, 1);
-  saveTasks(tasks);
+  await axios.delete(`http://localhost:3000/tasks/${task.id}`);
   console.log(" Task deleted.");
 }
 
@@ -118,22 +109,22 @@ const ask = readline.createInterface({
 console.log("📃 Welcome to your To-Do CLI!");
 ask.prompt();
 
-ask.on("line", (line) => {
+ask.on("line", async (line) => {
   const [cmd, ...args] = line.trim().split(" ");
   const text = args.join(" ");
 
   switch (cmd) {
     case "list":
-      showTasks();
+      await showTasks();
       break;
     case "add":
-      addTask(text);
+      await addTask(text);
       break;
     case "done":
-      markAsDone(Number(args[0]));
+      await markAsDone(Number(args[0]));
       break;
     case "delete":
-      deleteTask(Number(args[0]));
+      await deleteTask(Number(args[0]));
       break;
     case "help":
       showHelp();
