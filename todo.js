@@ -1,5 +1,3 @@
-
-
 // to start write node todo.js
 
 const fs = require("fs");
@@ -36,10 +34,10 @@ function showTasks() {
     const logs = task.log || [];
 
     console.log(`${i + 1}. ${task.text} [${status}]`);
-    console.log(`    📅 Created:   ${createdTime}`);
-    console.log(`    ✅ Completed: ${doneTime}`);
-    console.log(`    📓 Log:`);
-    logs.forEach(oneLog => console.log(`      - ${oneLog}`));
+    console.log(`  📅 Created:   ${createdTime}`);
+    console.log(`  ✅ Completed: ${doneTime}`);
+    console.log(`  📓 Log:`);
+    logs.forEach((oneLog) => console.log(`      - ${oneLog}`));
   });
 }
 
@@ -52,7 +50,7 @@ function addTask(taskText) {
     text: taskText,
     done: false,
     createdAt: now,
-    log: [`Task created at ${now}`]
+    log: [`Task created at ${now}`],
   });
 
   saveTasks(tasks);
@@ -65,7 +63,7 @@ function markAsDone(taskNumber) {
   const i = taskNumber - 1;
 
   if (!tasks[i]) {
-    console.log("⚠️ Task not found.");
+    console.log(" Task not found.");
     return;
   }
 
@@ -85,16 +83,16 @@ function deleteTask(taskNumber) {
   const i = taskNumber - 1;
 
   if (!tasks[i]) {
-    console.log("⚠️ Task not found.");
+    console.log(" Task not found.");
     return;
   }
 
-  console.log(`🗑️ Deleting: ${tasks[i].text}`);
+  console.log(` Deleting: ${tasks[i].text}`);
   console.log("📓 Log:", tasks[i].log);
 
   tasks.splice(i, 1);
   saveTasks(tasks);
-  console.log("🗑️ Task deleted.");
+  console.log(" Task deleted.");
 }
 
 //  Show help
@@ -114,13 +112,13 @@ function showHelp() {
 const ask = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
-  prompt: "📃 Type a command (or 'help'): "
+  prompt: "📃 Type a command (or 'help'): ",
 });
 
 console.log("📃 Welcome to your To-Do CLI!");
 ask.prompt();
 
-ask.on("line", line => {
+ask.on("line", (line) => {
   const [cmd, ...args] = line.trim().split(" ");
   const text = args.join(" ");
 
