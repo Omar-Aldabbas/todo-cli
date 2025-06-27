@@ -1,17 +1,25 @@
 # Todo CLI
 
-A simple command-line to-do list application built with Node.js.  
-Manage your tasks directly from the terminal.
+A simple command-line to-do list application built with Node.js, connected to a PostgreSQL database for persistent task management.
+
+---
 
 ## Features
 
-- Interactive CLI
-- Add tasks  
-- List all tasks with creation and completion timestamps  
-- Mark tasks as done  
-- Delete tasks  
-- Task Logs interduced
-## Usage
+- Interactive CLI to add, list, mark done, and delete tasks  
+- Tasks include creation and completion timestamps  
+- Task logs track history of updates  
+- Backend API built with Express.js connected to PostgreSQL  
+
+---
+
+## Setup & Run
+
+1. Ensure PostgreSQL is installed and running with a database named `todo` and a `tasks` table.  
+2. Install dependencies:
+
+```bash
+npm install
 
 ```bash
  node todo.js   # TO Start
