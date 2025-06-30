@@ -37,6 +37,8 @@ This Todo CLI application is a command-line tool built with Node.js that allows 
   ```bash
   npm run server.js
   node todo.js
+```
+
 ## Usage
 
 ```bash
