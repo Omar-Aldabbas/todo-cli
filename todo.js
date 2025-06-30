@@ -1,17 +1,17 @@
-// to start write node todo.js
-
 const axios = require("axios");
 const readline = require("readline");
 
+require("dotenv").config();
+const protocol = process.env.PROTOCOL || 'http';
+const API_URL = `${PROTOCOL}://${process.env.HOST}:${process.env.APP_PORT}`;
 
 
-//  Load tasks from the file
+
 async function loadTasks() {
-  const res = await axios.get("http://localhost:3000/tasks");
+  const res = await axios.get(`${PROTOCOL}://${process.env.HOST}:${process.env.APP_PORT}/tasks`);
   return res.data;
 }
 
-//  Show all
 async function showTasks() {
   const tasks = await loadTasks();
 
@@ -30,63 +30,56 @@ async function showTasks() {
     console.log(`  📅 Created:   ${createdTime}`);
     console.log(`  ✅ Completed: ${doneTime}`);
     console.log(`  📓 Log:`);
-    logs.forEach((oneLog) => console.log(`      - ${oneLog}`));
+    logs.forEach(logEntry => console.log(`      - ${logEntry}`));
   });
 }
 
 async function addTask(taskText) {
-  const now = new Date().toISOString();
-
   const task = {
     text: taskText,
     done: false,
-    createdAt: now,
-    log: [`Task created at ${now}`],
   };
 
-  await axios.post("http://localhost:3000/tasks", task);
+  await axios.post(`${PROTOCOL}://${process.env.HOST}:${process.env.APP_PORT}/tasks`, task);
   console.log("🆕 Task added.");
 }
 
-//  Mark task as Done
 async function markAsDone(taskNumber) {
   const tasks = await loadTasks();
-  const i = taskNumber - 1;
+  const index = taskNumber - 1;
 
-  if (!tasks[i]) {
-    console.log(" Task not found.");
+  if (!tasks[index]) {
+    console.log("Task not found.");
     return;
   }
-  const task = tasks[i];
-  const now = new Date().toISOString();
+
+  const task = tasks[index];
+
   const updatedTask = {
     done: true,
-    completedAt: now,
-    log: [...(task.log || []), `Marked done at ${now}`],
+    // completedAt and log handled by backend/db
   };
 
-  await axios.patch(`http://localhost:3000/tasks/${task.id}`, updatedTask);
+  await axios.patch(`${PROTOCOL}://${process.env.HOST}:${process.env.APP_PORT}/tasks/tasks/${task.id}`, updatedTask);
   console.log("✅ Task marked as done.");
 }
 
-//  Delete task
 async function deleteTask(taskNumber) {
   const tasks = await loadTasks();
-  const i = taskNumber - 1;
+  const index = taskNumber - 1;
 
-  if (!tasks[i]) {
-    console.log(" Task not found.");
+  if (!tasks[index]) {
+    console.log("Task not found.");
     return;
   }
-  const task = tasks[i];
-  console.log(` Deleting: ${task.text}`);
-  console.log("📓 Log:", task.log);
 
-  await axios.delete(`http://localhost:3000/tasks/${task.id}`);
-  console.log(" Task deleted.");
+  const task = tasks[index];
+  console.log(`Deleting: ${task.text}`);
+
+  await axios.delete(`${PROTOCOL}://${process.env.HOST}:${process.env.APP_PORT}/tasks/tasks/${task.id}`);
+  console.log("Task deleted.");
 }
 
-//  Show help
 function showHelp() {
   console.log(`
 📘 Available commands:
@@ -96,10 +89,9 @@ function showHelp() {
   delete 1         Delete task 1
   help             Show this help
   exit             Close the app
-  `);
+`);
 }
 
-//  make terminal interactive
 const ask = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
